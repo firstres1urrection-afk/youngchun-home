@@ -63,19 +63,22 @@ e<!DOCTYPE html>
   <script>
     document.getElementById('checkout-button').addEventListener('click', async function(event) {
       event.preventDefault();
-window.location.href = 'https://buy.stripe.com/test_aFa9AU6T68Xy0yNdl91wY00';
-  return;
-      try {
-        const response = await fetch('/api/create-checkout-session', { method: 'POST' });
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          alert('결제 세션 생성에 실패했습니다.');
-        }
-      } catch (err) {
-        alert('결제 처리 중 오류가 발생했습니다.');
-      }
+try {
+  const response = await fetch('/api/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  const data = await response.json();
+
+  if (data.url) {
+    window.location.href = data.url;
+  } else {
+    alert('결제 오류: ' + data.error);
+  }
+} catch (error) {
+  alert('결제 처리 중 오류 발생');
+}
     });
   </script>
 </body>
