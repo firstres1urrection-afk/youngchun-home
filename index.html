@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+e<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -63,6 +63,8 @@
   <script>
     document.getElementById('checkout-button').addEventListener('click', async function(event) {
       event.preventDefault();
+window.location.href = 'https://buy.stripe.com/test_aFa9AU6T68Xy0yNdl91wY00';
+  return;
       try {
         const response = await fetch('/api/create-checkout-session', { method: 'POST' });
         const data = await response.json();
