@@ -3,17 +3,25 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { priceId } = req.body;
-      if (!priceId) {
-        return res.status(400).json({ error: 'Missing priceId' });
-      }
+      // Create a checkout session with price_data instead of priceId to avoid expired price IDs
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
+        payment_method_types: ['card'],
         line_items: [
-          { price: priceId, quantity: 1 },
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Youngchun Beta Ticket',
+                description: 'Beta 이용권'
+              },
+              unit_amount: 500,
+            },
+            quantity: 1,
+          },
         ],
-        success_url: `${process.env.NEXT_PUBLIC_DOMAIN}/overseas-mode.html?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_DOMAIN}/?canceled=true`,
+        success_url: `${process.env.NEXT_PUBLIC_DOMAIN}/overseas-mode.html`,
+        cancel_url: `${process.env.NEXT_PUBLIC_DOMAIN}/`,
       });
       return res.status(200).json({ url: session.url });
     } catch (err) {
@@ -22,6 +30,6 @@ export default async function handler(req, res) {
     }
   } else {
     res.setHeader('Allow', 'POST');
-    return res.status(405).end('Method not allowed');
+    return res.status(405).end('Method Not Allowed');
   }
 }
